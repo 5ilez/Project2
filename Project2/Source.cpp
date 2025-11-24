@@ -134,30 +134,68 @@ void deletestu(ListStu& list, const string& id) {
 }
 
 
-void ghiFile(ListStu listStu, const string& filename) {
+void ghiFileStu(ListStu list, const string& filename) {
     ofstream f(filename); 
     if (!f.is_open()) {
         cout << "\n>> Khong mo duoc file de ghi!";
         return;
     }
 
-    f << left << setw(12) << "MSSV"
-        << left << setw(25) << "| Ho va ten"
-        << left << setw(12) << "| Gioi tinh"
-        << left << setw(10) << "| Lop" << endl;
-
-    f << string(60, '-') << endl;
-
-    for (stu p = listStu.first; p != NULL; p = p->next) {
-        f << left << setw(12) << p->id
-          << left << setw(25) << "| " + p->hoTen
-          << left << setw(12) << "| " + string((p->gioiTinh == 1 ? "Nam" : "Nu"))
-          << left << setw(10) << "| " + p->lop << endl;
+    stu p = list.first;
+    while (p != NULL) {
+          f << p->id << "|"
+            << p->hoTen << "|"
+            << p->gioiTinh << "|"
+            << p->lop << "\n";
+        p = p->next;
     }
 
     f.close();
     cout << "\n>> Da ghi danh sach vao file: " << filename;
 }
+void docFileStu(ListStu& list, const string& filename) {
+    ifstream in(filename);
+    if (!in.is_open()) {
+        cout << "Khong mo duoc file de doc!\n";
+        return;
+    }
+
+    while (list.first != NULL) {
+        stu p = list.first;
+        list.first = list.first->next;
+        delete p;
+    }
+    list.last = NULL;
+
+    string line;
+    while (getline(in, line)) {
+        if (line.empty()) continue;
+
+        stringstream ss(line);
+        string id, hoTen, gioiTinh, lop;
+
+        getline(ss, id, '|');
+        getline(ss, hoTen, '|');
+        getline(ss, gioiTinh, '|');
+        getline(ss, lop, '|');
+
+        if (id.empty()) continue;
+
+        Student s;
+        s.id = id;
+        s.hoTen = hoTen;
+        s.gioiTinh = stoi(gioiTinh);
+        s.lop = lop;
+
+        addStu(list, s);  
+    }
+
+    in.close();
+    cout << ">> Da tai danh sach sinh vien tu file.\n";
+}
+
+
+
 
 void initsub(ListSub& list) {
     list.first = list.last = NULL;
@@ -196,7 +234,7 @@ void nhapmonhoc(ListSub& list) {
     Subject subject;
     cin.ignore();
     do {
-        cout << "\nNhap MSSV (0: exit): ";
+        cout << "\nNhap mã mon hoc (0: exit): ";
         getline(cin, subject.maMH);
         while (isDuplicatesub(list, subject.maMH)) {
             cout << "\n>> Mon hoc nay da ton tai!";
@@ -207,7 +245,6 @@ void nhapmonhoc(ListSub& list) {
             break;
         cout << "\nNhap mon hoc: ";
         getline(cin, subject.tenMH);
-        cin.ignore();
         addSub(list, subject);
     } while (1);
 }
@@ -236,7 +273,6 @@ void updatesub(ListSub& list, const string& maMH) {
 
     cout << "\nNhap mon hoc moi: ";
     getline(cin, p->tenMH);
-    cin.ignore();
     cout << ">> Da cap nhat mon hoc thanh cong!\n";
 }
 sub findsub(ListSub list, const string& maMH) {
@@ -277,4 +313,50 @@ void deletesub(ListSub& list, const string& maMH) {
 
     delete p;
     cout << ">> Da xoa mon hoc thanh cong!\n";
+}
+void ghiFileSub(ListSub list, const string& filename) {
+    ofstream f(filename);
+    if (!f.is_open()) { cout << "Khong mo duoc file de ghi!\n"; return; }
+    for (sub p = list.first; p != nullptr; p = p->next) {
+        f << p->maMH << "|" << p->tenMH << "\n";
+    }
+    f.close();
+    cout << ">> Da ghi danh sach mon hoc vao file: " << filename << endl;
+}
+void docFileSub(ListSub& list, const string& filename) {
+    ifstream in(filename);
+    if (!in.is_open()) {
+        cout << "\n>> Khong mo duoc file de doc!";
+        return;
+    }
+
+    //xoa ds cu
+    while (list.first != NULL) {
+        sub p = list.first;
+        list.first = list.first->next;
+        delete p;
+    }
+    list.last = NULL;
+
+    string line;
+    while (getline(in, line)) {
+        if (line.empty()) continue;
+
+        stringstream ss(line);
+        string maMH, tenMH;
+
+        getline(ss, maMH, '|');
+        getline(ss, tenMH, '|');
+
+        if (maMH.empty()) continue;
+
+        Subject s;
+        s.maMH = maMH;
+        s.tenMH = tenMH;
+
+        addSub(list, s);
+    }
+
+    in.close();
+    cout << "\n>> Da tai danh sach mon hoc tu file.\n";
 }

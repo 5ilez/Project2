@@ -3,8 +3,10 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
+#include <sstream>
+
 using namespace std;
-//student
+
 struct Student {
 	string id;
 	string hoTen;
@@ -29,10 +31,12 @@ void xuatsv(ListStu list);
 void updatestu(ListStu& list, const string& id);
 stu findstu(ListStu list, const string& id);
 void deletestu(ListStu& list, const string& id);
-void ghiFile(ListStu listStu, const string& filename);
-void docFile(ListStu& listStu, const string& filename);
+void ghiFileStu(ListStu list, const string& filename);
+void docFileStu(ListStu& list, const string& filename);
+void menuStudent(ListStu& list);
 
-//subject
+
+
 struct Subject {
 	string maMH;
 	string tenMH;
@@ -55,17 +59,6 @@ void xuatmonhoc(ListSub list);
 void updatesub(ListSub& list, const string& maMH);
 sub findsub(ListSub list, const string& maMH);
 void deletesub(ListSub& list, const string& maMH);
-
-//mark
-struct Mark {
-	string id;
-	string maMH;
-	float diem;
-	Mark* next;
-	Mark* pre;
-};
-typedef Mark* mrk;
-struct ListMrk {
-	mrk first;
-	mrk last;
-};
+void ghiFileSub(ListSub list, const string& filename);
+void docFileSub(ListSub& list, const string& filename);
+void menuSubject(ListSub& list);
